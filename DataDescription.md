@@ -110,90 +110,92 @@ that represent real-world conditions affecting **trip duration**.
   calculated as `dropoff_time - pickup_time`.
 
 
-# Weather Dataset
-## NOAA Weather.gov API Datasets
+# Weather Dataset  
+## Open-Meteo Archive API Datasets
 
-This document describes the columns retrieved from the **Weather.gov API**,
-provided by the National Oceanic and Atmospheric Administration (NOAA).
-The data represents **observed weather conditions in New York City (NYC)** and
-is collected from NOAA weather stations based on geographic location and time.
+This document describes the columns retrieved from the Open-Meteo Archive API,
+provided by Open‑Meteo, a global provider of historical, grid-based weather data.
 
-### Weather.gov Stations API (`/stations`)
+For the purpose of this project, a spatially and temporally filtered subset of the
+Open-Meteo dataset was extracted to represent historical hourly weather conditions within
+New York City (NYC). Weather data was collected for a predefined set of geographic points
+covering the NYC area and aligned with taxi trip records for downstream analysis.
 
-This API provides metadata for NOAA weather stations, including their fixed
-geographic locations. Weather stations serve as spatial reference points for
-all observed weather measurements.
+Unlike station-based weather systems, Open-Meteo provides gridded reanalysis-based weather data,
+ensuring consistent spatial coverage across the study area without reliance on individual
+physical weather stations.
 
-- `stationId`: Unique identifier of the NOAA weather station.
-- `name`: Official name of the weather station.
-- `latitude`: Latitude of the weather station in decimal degrees (WGS84).
-- `longitude`: Longitude of the weather station in decimal degrees (WGS84).
-- `elevation`: Elevation of the weather station above sea level.
-- `timeZone`: Time zone in which the weather station is located.
+## Open-Meteo Archive API (`/v1/archive`)
 
+This API provides **historical, hourly weather data** for a given geographic coordinate
+(latitude and longitude) over a specified time range.
 
-### Weather.gov Observations API (`/stations/{stationId}/observations`)
+Each coordinate represents a **spatial weather point**, which implicitly covers a surrounding
+geographic area.
 
-This API provides time-series **observed weather data** recorded at a specific
-NOAA weather station. These measurements reflect actual atmospheric conditions
-at the time of observation.
-
-- `time`: Timestamp indicating when the weather observation was recorded.
-- `temperature`: Observed air temperature.
-- `dewpoint`: Observed dew point temperature.
-- `relativeHumidity`: Observed relative humidity percentage.
-- `windSpeed`: Observed wind speed.
-- `windDirection`: Observed wind direction in degrees.
-- `windGust`: Observed maximum wind gust speed.
-- `precipitation`: Observed precipitation amount during the previous hour.
-- `snowfall`: Observed snowfall amount during the previous hour.
-- `visibility`: Observed horizontal visibility distance.
-- `pressure`: Observed atmospheric pressure.
-- `stationId`: Identifier of the weather station that recorded the observation.
+Weather data is retrieved for multiple spatial points arranged in a regular grid
+with approximately **10 km spacing**, ensuring full coverage of New York City while
+minimizing the number of external API requests.
 
 
-### Notes
+## Spatial Reference (Weather Points - NYC)
 
-- All weather data represents **measured observations**, not forecasts.
-- Weather stations are treated as fixed geographic points.
-- Observations are typically available at hourly or sub-hourly intervals.
-- Missing values may occur depending on station reporting frequency.
+Each weather observation is associated with a fixed spatial point.
 
-### Data Source
+- `point_id`: Unique identifier of the spatial weather point.
+- `latitude`: Latitude of the weather point in decimal degrees (WGS84).
+- `longitude`: Longitude of the weather point in decimal degrees (WGS84).
 
-National Oceanic and Atmospheric Administration (NOAA)  
-National Weather Service (NWS)  
-Weather.gov API  
-https://api.weather.gov
+
+## Open-Meteo Hourly Weather Variables
+
+The Open-Meteo Archive API returns time-series weather data at **hourly resolution**.
+All values correspond to the specified geographic point and timestamp.
+
+- `time`: Timestamp indicating the hour of the weather observation (UTC).
+- `temperature_2m`: Air temperature measured at 2 meters above ground level (°C).
+- `precipitation`: Total precipitation during the hour (mm).
+- `windspeed_10m`: Wind speed measured at 10 meters above ground level (km/h).
+- `pressure_msl`: Mean sea-level atmospheric pressure (hPa).
+
+
+## Notes
+
+- All weather data represents **historical reanalysis-based observations**, not real-time forecasts.
+- Data is provided at **hourly temporal resolution**, suitable for time-aligned integration
+  with taxi trip pickup times.
+- Spatial coverage is achieved using a **regular grid of weather points** rather than
+  individual weather stations.
+- Each taxi trip location is mapped to the **nearest weather point**, implicitly defining
+  the spatial coverage area of that point.
+- Weather variables vary smoothly across space, making this representation appropriate
+  for city-scale transportation analysis.
+- Missing values are rare due to the gridded nature of the dataset.
 
 
 ## Core Weather Dataset for Trip Duration Prediction
 
-- `time`: Timestamp indicating when the weather observation was recorded.
+The final weather dataset used for enriching taxi trip records contains the following columns:
 
-- `station_id`: Unique identifier of the NOAA weather station that recorded
-  the observation.
+- `time`: Timestamp indicating the hour of the weather observation (UTC).
 
-- `latitude`: Latitude of the weather station in decimal degrees (WGS84).
+- `point_id`: Identifier of the spatial weather point associated with the observation.
 
-- `longitude`: Longitude of the weather station in decimal degrees (WGS84).
+- `latitude`: Latitude of the weather point in decimal degrees (WGS84).
 
-- `temperature`: Observed air temperature at the station.
+- `longitude`: Longitude of the weather point in decimal degrees (WGS84).
 
-- `dewpoint`: Observed dew point temperature.
+- `temperature_2m`: Air temperature at 2 meters above ground level.
 
-- `relative_humidity`: Observed relative humidity expressed as a percentage.
+- `precipitation`: Hourly precipitation amount.
 
-- `wind_speed`: Observed wind speed.
+- `windspeed_10m`: Wind speed at 10 meters above ground level.
 
-- `wind_direction`: Observed wind direction in degrees.
+- `pressure_msl`: Mean sea-level atmospheric pressure.
 
-- `wind_gust`: Observed maximum wind gust speed.
 
-- `precipitation`: Observed precipitation amount during the previous hour.
+## Data Source
 
-- `snowfall`: Observed snowfall amount during the previous hour.
-
-- `visibility`: Observed horizontal visibility distance.
-
-- `pressure`: Observed atmospheric pressure.
+Open-Meteo  
+Open-Meteo Archive API  
+https://archive-api.open-meteo.com
