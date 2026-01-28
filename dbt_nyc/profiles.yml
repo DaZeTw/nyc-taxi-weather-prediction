@@ -1,0 +1,21 @@
+dbt_nyc:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: localhost
+      port: 5434          # Your Data Warehouse port
+      user: k6
+      pass: k6
+      dbname: "k6"        # Use dbname instead of database
+      schema: public      # Your target schema for Step 6
+      threads: 1
+    prod:
+      type: postgres
+      host: localhost
+      port: 5434
+      user: k6
+      pass: k6
+      dbname: "k6"        # Quotes ensure it is read as a string
+      schema: production  # Recommended to keep dev/prod schemas separate
+      threads: 1

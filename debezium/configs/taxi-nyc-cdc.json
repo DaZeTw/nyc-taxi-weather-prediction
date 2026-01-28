@@ -1,0 +1,18 @@
+{
+  "name": "taxi-nyc-cdc",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "database.hostname": "dw-postgresql",
+    "database.port": "5432",
+    "database.user": "k6",
+    "database.password": "k6",
+    "database.dbname": "k6",
+    "database.server.name": "taxi_server",
+    "plugin.name": "pgoutput",
+    "topic.prefix": "cdc_taxi",
+    "table.include.list": "staging.nyc_taxi",
+    "tasks.max": "1",
+    "slot.name": "debezium_taxi_slot",
+    "publication.name": "debezium_taxi_pub"
+  }
+}
