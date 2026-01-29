@@ -5,3 +5,7 @@
 **/logs/
 test.py
 /airflow/logs/*
+
+eda.ipynb
+eda2.ipynb
+/spark_temp/*

@@ -80,7 +80,7 @@ services:
     command: server --console-address ":9001" /data
 
   postgresql:
-    image: postgres:latest
+    image: postgres:16
     command: ["postgres", "-c", "wal_level=logical"]
     container_name: dw-postgresql
     healthcheck:
@@ -96,6 +96,20 @@ services:
       - POSTGRES_PASSWORD=k6
     volumes:
       - dw_postgres_data:/var/lib/postgresql/data
+
+  streamlit_app:
+    build: 
+      context: ./serving
+    container_name: streamlit_app
+    ports:
+      - "8501:8501"
+    environment:
+      - MINIO_ENDPOINT=http://minio:9000
+      - AWS_ACCESS_KEY_ID=minio_access_key
+      - AWS_SECRET_ACCESS_KEY=minio_secret_key
+    depends_on:
+      - minio
+    # Đảm bảo chung network với MinIO
 
 volumes:
   dw_postgres_data:

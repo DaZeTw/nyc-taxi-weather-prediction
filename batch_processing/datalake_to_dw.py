@@ -53,11 +53,13 @@ def create_spark_session():
     """
     from pyspark.sql import SparkSession
 
+    jars_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'jars'))
+    jars = f"{jars_path}/postgresql-42.4.3.jar,{jars_path}/aws-java-sdk-bundle-1.12.262.jar,{jars_path}/hadoop-aws-3.3.4.jar"
     try: 
         spark = (SparkSession.builder.config("spark.executor.memory", MEMORY) \
                         .config(
                             "spark.jars", 
-                            "jars/postgresql-42.4.3.jar,jars/aws-java-sdk-bundle-1.12.262.jar,jars/hadoop-aws-3.3.4.jar",
+                            jars,
                         )
                         .config("spark.sql.execution.arrow.pyspark.enabled", "true")
                         .appName("Batch Processing Application")
@@ -69,6 +71,7 @@ def create_spark_session():
     except Exception as e:
         traceback.print_exc(file=sys.stderr)
         logging.error(f"Couldn't create the spark session due to exception: {e}")
+        return
 
     return spark
 

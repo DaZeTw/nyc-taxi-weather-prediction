@@ -1,10 +1,12 @@
 kafka-python==2.0.2
 avro-python3==1.10.2
+boto3
 pandas==2.2.2
 pyarrow==16.1.0
 python-schema-registry-client==2.5.6
 pyspark==3.5.1
 pymongo==4.7.2
+pendulum==2.1.2
 delta-spark==3.1.0
 # sqlalchemy==2.0.20
 sqlalchemy==1.4.49
@@ -23,3 +25,12 @@ apache-airflow-providers-postgres==5.6.1
 airflow-provider-great-expectations==0.2.6
 apache-airflow-providers-docker==3.7.5
 s3fs==0.4.2
+"flask-session<0.6.0"
+"connexion>=2.14.0,<3.0.0"
+"flask<2.3"
+streamlit
+folium
+streamlit-folium
+polyline
+geopy
+requests

@@ -13,12 +13,22 @@ stream_up:
 stream_down:
 	docker compose -f stream-docker-compose.yaml down
 
-run_all:
+up_all:
 	docker compose -f docker-compose.yaml up -d
 	docker compose -f stream-docker-compose.yaml up -d
-	docker compose -f airflow-docker-compose.yaml up -d --build
+	docker compose -f airflow-docker-compose.yaml up -d
 
-stop_all:
+down_all:
 	docker compose -f docker-compose.yaml down
 	docker compose -f stream-docker-compose.yaml down
 	docker compose -f airflow-docker-compose.yaml down
+
+stop_all:
+	docker compose -f docker-compose.yaml stop
+	docker compose -f stream-docker-compose.yaml stop
+	docker compose -f airflow-docker-compose.yaml stop
+
+start_all:
+	docker compose -f docker-compose.yaml start
+	docker compose -f stream-docker-compose.yaml start
+	docker compose -f airflow-docker-compose.yaml start
