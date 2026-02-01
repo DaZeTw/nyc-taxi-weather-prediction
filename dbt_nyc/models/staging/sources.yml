@@ -1,0 +1,73 @@
+version: 2
+
+sources:
+  - name: staging
+    description: "Staging schema with raw and processed data"
+    # database: nyc_taxi_db  ← REMOVE THIS LINE
+    schema: staging
+    tables:
+      - name: nyc_taxi_weather
+        description: "Taxi trips with weather data"
+        columns:
+          - name: vendor_id
+            description: "Taxi vendor ID"
+          - name: pickup_datetime
+            description: "Trip start timestamp"
+          - name: dropoff_datetime
+            description: "Trip end timestamp"
+          - name: passenger_count
+            description: "Number of passengers"
+          - name: trip_distance
+            description: "Trip distance in miles"
+          - name: rate_code_id
+            description: "Rate code"
+          - name: store_and_fwd_flag
+            description: "Store and forward flag"
+          - name: pu_location_id
+            description: "Pickup location ID"
+          - name: do_location_id
+            description: "Dropoff location ID"
+          - name: payment_type
+            description: "Payment type"
+          - name: fare_amount
+            description: "Base fare"
+          - name: extra
+            description: "Extra charges"
+          - name: mta_tax
+            description: "MTA tax"
+          - name: tip_amount
+            description: "Tip amount"
+          - name: tolls_amount
+            description: "Tolls amount"
+          - name: improvement_surcharge
+            description: "Improvement surcharge"
+          - name: total_amount
+            description: "Total amount"
+          - name: congestion_surcharge
+            description: "Congestion surcharge"
+          - name: airport_fee
+            description: "Airport fee"
+          - name: temperature_2m
+            description: "Temperature at 2m"
+          - name: precipitation
+            description: "Precipitation"
+          - name: windspeed_10m
+            description: "Wind speed at 10m"
+          - name: pressure_msl
+            description: "Pressure at sea level"
+          - name: trip_duration_minutes
+            description: "Trip duration in minutes"
+          - name: hour_of_day
+            description: "Hour of day"
+          - name: day_of_week
+            description: "Day of week"
+          - name: is_weekend
+            description: "Is weekend flag"
+          - name: avg_speed_mph
+            description: "Average speed in mph"
+          - name: year
+            description: "Year"
+          - name: month
+            description: "Month"
+          - name: taxi_type
+            description: "Taxi type (yellow/green)"
