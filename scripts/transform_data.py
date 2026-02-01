@@ -14,7 +14,6 @@ from minio_utils import MinIOClient
 ###############################################
 # Parameters & Arguments
 ###############################################
-YEARS = ["2018"]
 CFG_FILE = "config/datalake.yaml"
 
 def get_spark_session(cfg, endpoint_url, access_key, secret_key):
@@ -163,7 +162,7 @@ def process_taxi_data(df, taxi_type, target_schema):
     
     return df
 
-def transform_data(endpoint_url, access_key, secret_key):
+def transform_data(endpoint_url, access_key, secret_key, years=[2024]):
     cfg = load_cfg(CFG_FILE)
     datalake_cfg = cfg["datalake"]
 
@@ -214,7 +213,7 @@ def transform_data(endpoint_url, access_key, secret_key):
     # ==========================================
     # Process each year and month separately
     # ==========================================
-    for year in YEARS:
+    for year in years:
         base_path = f"s3a://{datalake_cfg['bucket_name_1']}/{datalake_cfg['folder_name']}/"
         
         for month in range(1, 13):

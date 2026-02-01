@@ -1,20 +1,20 @@
 {{ config(materialized = 'table') }}
 
-with service_type_staging as (
+with taxi_type_staging as (
     select distinct
-        service_type
+        taxi_type
     from 
-        staging.nyc_taxi
+        {{ source('staging', 'nyc_taxi_weather') }}
     where 
-        vendor_id is not null
+        taxi_type is not null
 )
 
 select 
-    service_type as service_type_id,
-    {{ get_service_name('service_type') }} as service_name
+    taxi_type as taxi_type_id,
+    {{ get_taxi_type_name('taxi_type') }} as taxi_type_name
 from 
-    service_type_staging
+    taxi_type_staging
 where 
-    service_type is not null
+    taxi_type is not null
 order by
-    service_type asc
+    taxi_type asc

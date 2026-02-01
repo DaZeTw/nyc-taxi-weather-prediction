@@ -12,18 +12,17 @@ from minio_utils import MinIOClient
 # Parameters & Arguments
 ###############################################
 CFG_FILE = "./config/datalake.yaml"
-YEARS = ["2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"]
 ###############################################
 
 
 ###############################################
 # Main
 ###############################################
-def extract_load(endpoint_url, access_key, secret_key):
+def extract_load(endpoint_url, access_key, secret_key, years=[2024]):
     cfg = load_cfg(CFG_FILE)
     datalake_cfg = cfg["datalake"]
     nyc_data_cfg = cfg["nyc_data"]
-
+    years = [str(year) for year in years]
     client = MinIOClient(
         endpoint_url=endpoint_url,
         access_key=access_key,
@@ -41,7 +40,7 @@ def extract_load(endpoint_url, access_key, secret_key):
     print("🚕 UPLOADING TAXI DATA")
     print("="*60)
     
-    for year in YEARS:
+    for year in years:
         # Construct the search path (assuming data/YEAR/*.parquet)
         search_path = os.path.join(nyc_data_cfg["folder_path"], year, "*.parquet")
         all_fps = glob(search_path)

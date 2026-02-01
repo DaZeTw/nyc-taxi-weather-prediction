@@ -2,20 +2,21 @@
 
 with payment_staging as (
     select distinct 
-        payment_type_id
+        payment_type
     from 
-        staging.nyc_taxi
+        {{ source('staging', 'nyc_taxi_weather') }}
     where 
-        vendor_id is not null
+        payment_type is not null
 )
 
 select 
-    {{ dbt_utils.surrogate_key(['payment_type_id']) }} as payment_type_key,
-    payment_type_id,
-    {{ get_payment_description('payment_type_id') }} as payment_description
+    payment_type,
+    {{ get_payment_description('payment_type') }} as payment_description
 from 
     payment_staging
 where
-    payment_type_id is not null
+    payment_type is not null
+    and
+    payment_type in (1, 2, 3, 4, 5, 6)
 order by
-    payment_type_id asc 
+    payment_type asc

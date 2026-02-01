@@ -26,7 +26,6 @@ LON_MIN, LON_MAX = -74.2335, -73.7110
 STEP = 0.1
 
 # Process only 2018 for testing
-YEARS = [2018]
 
 ###############################################
 
@@ -146,7 +145,7 @@ def load_weather_data_for_month(spark, client, bucket_name, year, month):
         traceback.print_exc()
         return None
 
-def merge_weather_data(endpoint_url, access_key, secret_key):
+def merge_weather_data(endpoint_url, access_key, secret_key, years=[2024]):
     """
     Merge weather data with taxi trip data month-by-month.
     Uses KD-Tree for efficient nearest neighbor search.
@@ -201,7 +200,7 @@ def merge_weather_data(endpoint_url, access_key, secret_key):
         
         total_processed = 0
         
-        for year in YEARS:
+        for year in years:
             for month in range(1, 13):
                 print(f"\n{'='*100}")
                 print(f"📅 Processing: {year}-{month:02d}")

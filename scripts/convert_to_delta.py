@@ -19,7 +19,6 @@ warnings.filterwarnings('ignore')
 # Parameters & Arguments
 ###############################################
 CFG_FILE = "config/datalake.yaml"
-YEARS = [2018]  # Process only 2018 for testing
 
 ###############################################
 
@@ -53,7 +52,7 @@ def get_spark_session(endpoint_url, access_key, secret_key):
         .config("spark.driver.maxResultSize", "2g") \
         .getOrCreate()
 
-def delta_convert(endpoint_url, access_key, secret_key):
+def delta_convert(endpoint_url, access_key, secret_key, years=[2024]):
     cfg = load_cfg(CFG_FILE)
     datalake_cfg = cfg["datalake"]
     
@@ -75,7 +74,7 @@ def delta_convert(endpoint_url, access_key, secret_key):
         
         total_processed = 0
         
-        for year in YEARS:
+        for year in years:
             for month in range(1, 13):
                 print(f"\n{'='*100}")
                 logging.info(f"📅 Processing: {year}-{month:02d}")

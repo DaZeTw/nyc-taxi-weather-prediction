@@ -53,9 +53,6 @@ cfg = load_cfg(CFG_FILE_SPARK)
 spark_cfg = cfg.get("spark_config", {})
 
 MEMORY = spark_cfg.get("executor_memory", "4g")
-
-# Process configuration
-YEARS = [2018]  # Years to process
 ###############################################
 
 
@@ -205,14 +202,29 @@ def load_to_staging_table(df):
 ###############################################
 # Main Pipeline
 ###############################################
-def main():
+def main(years=None, months=None):
     """
     Main ETL pipeline: Delta Lake (MinIO) → PostgreSQL Staging
     Process data incrementally by year and month
+    
+    Args:
+        years: List of years to process (default: [2018])
+        months: List of months to process (default: [1])
     """
+    if years is None:
+        years = [2018]
+    if months is None:
+        months = [1]
+    
+    # Convert to integers if strings are passed
+    years = [int(year) if isinstance(year, str) else year for year in years]
+    months = [int(month) if isinstance(month, str) else month for month in months]
+    
     start_time = time.time()
     
-    logging.info("🚀 Starting Delta Lake to Staging pipeline (incremental by month)...")
+    logging.info(f"🚀 Starting Delta Lake to Staging pipeline...")
+    logging.info(f"📅 Years to process: {years}")
+    logging.info(f"📆 Months to process: {months}")
     
     # Initialize Spark
     spark = create_spark_session()
@@ -226,8 +238,8 @@ def main():
         # ==========================================
         # Process each year and month
         # ==========================================
-        for year in YEARS:
-            for month in range(1, 13):
+        for year in years:
+            for month in months:
                 print(f"\n{'='*100}")
                 logging.info(f"📅 Processing: {year}-{month:02d}")
                 
@@ -246,7 +258,7 @@ def main():
                     logging.info(f"   ✅ Loaded {month_count:,} records for {year}-{month:02d}")
                     
                     # Show schema on first iteration
-                    if year == YEARS[0] and month == 1:
+                    if year == years[0] and month == months[0]:
                         logging.info("\n📊 Delta Lake Schema:")
                         df_delta.printSchema()
                     
@@ -319,9 +331,11 @@ def main():
         verify_count = df_verify.count()
         logging.info(f"✅ Staging table contains: {verify_count:,} total records")
         
-        # Show distribution by year-month
-        logging.info("\n📁 Distribution by Year-Month:")
-        df_verify.groupBy("year", "month").count() \
+        # Show distribution by year-month (filtered to processed data)
+        logging.info("\n📁 Distribution by Year-Month (Processed Data):")
+        df_verify.filter(
+            (F.col("year").isin(years)) & (F.col("month").isin(months))
+        ).groupBy("year", "month").count() \
             .orderBy("year", "month") \
             .show(24, truncate=False)
         
@@ -339,4 +353,5 @@ def main():
 # Entry Point
 ###############################################
 if __name__ == "__main__":
-    main()
+    # For testing: process specific year and month
+    main(years=[2019], months=[1])

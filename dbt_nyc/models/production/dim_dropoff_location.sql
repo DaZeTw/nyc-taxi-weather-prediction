@@ -2,20 +2,18 @@
 
 with dropoff_location as (
     select distinct 
-        dropoff_location_id,
-        dropoff_latitude,
-        dropoff_longitude
+        do_location_id
     from 
-        staging.nyc_taxi
+        {{ source('staging', 'nyc_taxi_weather') }}
     where 
-        vendor_id is not null
+        do_location_id is not null
 )
 
 select 
-    *
+    do_location_id
 from 
     dropoff_location
 where
-    dropoff_location_id is not null
+    do_location_id is not null
 order by 
-    dropoff_location_id asc
+    do_location_id asc

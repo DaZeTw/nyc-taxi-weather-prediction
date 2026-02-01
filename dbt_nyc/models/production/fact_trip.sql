@@ -3,13 +3,12 @@
 with trip_staging as (
     select 
         -- identifiers
-        {{ dbt_utils.surrogate_key(['f.vendor_id', 'f.rate_code_id', 'f.pickup_location_id', 'f.dropoff_location_id','f.payment_type_id', 'f.service_type', 'f.pickup_datetime', 'f.dropoff_datetime']) }} as trip_id,
-        dv.vendor_key,
-        dr.rate_code_key,
-        f.pickup_location_id,
-        f.dropoff_location_id,
-        dp.payment_type_key,
-        f.service_type as service_type_id,
+        {{ dbt_utils.surrogate_key(['f.vendor_id', 'f.rate_code_id', 'f.pu_location_id', 'f.do_location_id', 'f.payment_type', 'f.pickup_datetime', 'f.dropoff_datetime']) }} as trip_id,
+        f.vendor_id,
+        f.rate_code_id,
+        f.pu_location_id,
+        f.do_location_id,
+        f.payment_type,
 
         -- timestamps
         f.pickup_datetime,
@@ -18,25 +17,45 @@ with trip_staging as (
         -- trip info
         f.passenger_count,
         f.trip_distance,
+        f.store_and_fwd_flag,
 
         -- payment info
+        f.fare_amount,
         f.extra,
         f.mta_tax,
-        f.fare_amount,
         f.tip_amount,
         f.tolls_amount,
-        f.total_amount,
         f.improvement_surcharge,
-        f.congestion_surcharge
+        f.total_amount,
+        f.congestion_surcharge,
+        -- f.airport_fee,  ← REMOVED (doesn't exist in staging table)
+
+        -- weather info
+        f.temperature_2m,
+        f.precipitation,
+        f.windspeed_10m,
+        f.pressure_msl,
+
+        -- derived features
+        f.trip_duration_minutes,
+        f.hour_of_day,
+        f.day_of_week,
+        f.is_weekend,
+        f.avg_speed_mph,
+
+        -- partition columns
+        f.year,
+        f.month,
+        f.taxi_type
 
     from 
-        staging.nyc_taxi as f
+        {{ source('staging', 'nyc_taxi_weather') }} as f
     join 
-        production.dim_vendor as dv ON f.vendor_id = dv.vendor_id
+        {{ ref('dim_vendor') }} as dv ON f.vendor_id = dv.vendor_id
     join
-        production.dim_rate_code as dr ON f.rate_code_id = dr.rate_code_id
+        {{ ref('dim_rate_code') }} as dr ON f.rate_code_id = dr.rate_code_id
     join
-        production.dim_payment as dp ON f.payment_type_id = dp.payment_type_id
+        {{ ref('dim_payment') }} as dp ON f.payment_type = dp.payment_type
 )
 
 select

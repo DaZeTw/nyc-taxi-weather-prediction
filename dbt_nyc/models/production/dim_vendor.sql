@@ -4,13 +4,12 @@ with vendor_staging as (
     select distinct
         vendor_id
     from 
-        staging.nyc_taxi
+        {{ source('staging', 'nyc_taxi_weather') }}
     where 
         vendor_id is not null
 )
 
 select 
-    {{ dbt_utils.surrogate_key(['vendor_id']) }} as vendor_key,
     vendor_id,
     {{ get_vendor_description('vendor_id') }} as vendor_name
 from 
@@ -18,6 +17,6 @@ from
 where
     vendor_id is not null
     and
-    cast(vendor_id as integer) < 3
+    vendor_id in (1, 2)
 order by
     vendor_id asc

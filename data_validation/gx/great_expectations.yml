@@ -107,6 +107,16 @@ fluent_datasources:
         table_name: nyc_taxi_test
         schema_name: staging
     connection_string: postgresql+psycopg2://k6:k6@localhost:5432/k6
+  nyc_taxi_weather_datasource:
+    type: postgres
+    assets:
+      nyc_taxi_weather_asset:
+        type: table
+        order_by: []
+        batch_metadata: {}
+        table_name: nyc_taxi_weather
+        schema_name: staging
+    connection_string: postgresql+psycopg2://k6:k6@localhost:5434/k6
 notebooks:
 include_rendered_content:
   globally: false

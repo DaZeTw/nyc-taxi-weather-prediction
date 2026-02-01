@@ -18,7 +18,6 @@ logging.basicConfig(level=logging.INFO,
 # Parameters & Arguments
 ###############################################
 CFG_FILE = "config/datalake.yaml"
-YEARS = [2018]  # Process only 2018 for testing
 
 ###############################################
 
@@ -46,7 +45,7 @@ def get_spark_session(endpoint_url, access_key, secret_key):
         .config("spark.driver.maxResultSize", "2g") \
         .getOrCreate()
 
-def validate_data(endpoint_url, access_key, secret_key):
+def validate_data(endpoint_url, access_key, secret_key, years=[2024]):
     """
     ⚡ OPTIMIZED: Validate data after weather merge with single-pass operations
     - Filter out records with null values in critical columns
@@ -106,7 +105,7 @@ def validate_data(endpoint_url, access_key, secret_key):
         # ==========================================
         # Process each year-month separately
         # ==========================================
-        for year in YEARS:
+        for year in years:
             for month in range(1, 13):
                 print(f"\n{'='*100}")
                 logging.info(f"📅 Processing: {year}-{month:02d}")

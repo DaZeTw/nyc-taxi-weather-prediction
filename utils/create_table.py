@@ -155,8 +155,8 @@ def main():
         pc.execute_query(create_table_staging)
         print("✅ Created: staging.nyc_taxi_weather")
         
-        # pc.execute_query(create_table_production)
-        # print("✅ Created: production.taxi_ml_features")
+        pc.execute_query(create_table_production)
+        print("✅ Created: production.taxi_ml_features")
         
         print("\n🎉 All tables created successfully!")
         
