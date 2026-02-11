@@ -35,6 +35,8 @@ logger = logging.getLogger(__name__)
 
 def get_spark_session(app_name="Train Taxi Model"):
     """Khởi tạo Spark Session với cấu hình Delta Lake và S3/MinIO."""
+    # local[1] để giới hạn số luồng CPU, để demo đảm bảo chạy được ta đặt là 1
+    # set thành * để dùng toàn bộ nhưng lưu ý nó sẽ dùng toàn bộ luồng của máy (có thể không chạy được các ứng dụng khác)
     builder = SparkSession.builder \
         .appName(app_name) \
         .master("local[1]") \
